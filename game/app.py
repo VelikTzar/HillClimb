@@ -1,4 +1,6 @@
 import math
+import os
+
 import pygame
 import pymunk
 from classes_pymunk import *
@@ -96,20 +98,22 @@ if __name__ == '__main__':
     pygame.init()
     game = Game()
     space = game.space
-    pos = pymunk.Vec2d(100, 200)
+
     #ph_car = Car(pos, space)
     #person = Person(pos, space)
 
-    player = Player(pos, space)
-    car = CarMovementHandler(player.car)
-    game.objects_group.append(car)
+
     terrain = Terrain(space, WIDTH, HEIGHT)
     terrain.generate_terrain(10, 0.5, 7)
     boundaries = Boundaries(space, WIDTH, HEIGHT)
     boundaries.generate_boundaries()
 
+    pos = terrain.return_spawn()
+    player = Player(pos, space)
+    car = CarMovementHandler(player.car)
+    game.objects_group.append(car)
 
-    image = pygame.image.load('pig.png')
+    image = pygame.image.load('../sprites/pig.png')
     image = pygame.transform.scale(image, (80, 30))
     car_sprite = Entity(body=player.car.chassis_body, space=space, window=game.window, height=HEIGHT, image=image)
     game.sprite_group.add(car_sprite)

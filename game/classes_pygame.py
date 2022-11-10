@@ -19,7 +19,7 @@ class Entity(pygame.sprite.Sprite):
         #pos = convert_coordinates(self.body.position, self.height)
         self.rect.center = self.body.position
         self.image = pygame.transform.rotate(
-            self.orig_image, math.degrees(self.body.angle))
+            self.orig_image, -math.degrees(self.body.angle))
         self.rect = self.image.get_rect(center=self.rect.center)
 
 

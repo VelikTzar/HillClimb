@@ -37,6 +37,7 @@ class Terrain:
     TERRAIN_THICKNESS = 5
 
     def __init__(self, space, width, height):
+        self.spacing = None
         self.terrain_height_coordinates = None
         self.space = space
         self.thickness = Terrain.TERRAIN_THICKNESS
@@ -55,13 +56,18 @@ class Terrain:
     # smoothness defines the number of iterations made during the cosine interpolation superposition
     def generate_terrain(self, spacing, max_height_ratio, smoothness=8):
         terrain_height = self.height * max_height_ratio
+        self.spacing = spacing
         self.terrain_height_coordinates = terrain_maths.return_terrain_height_cos(self.width // spacing, terrain_height,
                                                                                   smoothness)
 
         for i in range(1, len(self.terrain_height_coordinates)):
-            Terrain.create_segment(self.space, self.thickness, ((i - 1) * spacing,
-                                                                self.height - self.terrain_height_coordinates[i - 1]),
+            Terrain.create_segment(self.space, self.thickness,
+                                   ((i - 1) * spacing, self.height - self.terrain_height_coordinates[i - 1]),
                                    (i * spacing, self.height - self.terrain_height_coordinates[i]))
+
+    def return_spawn(self):
+        a = (Boundaries.THICKNESS//self.spacing) + 1
+        return pymunk.Vec2d((a*self.spacing+Car.CHASSIS_SIZE[0]), (self.height - Terrain.TERRAIN_THICKNESS - self.terrain_height_coordinates[a]) - Car.CHASSIS_SIZE[1])
 
 
 class Car:
@@ -215,7 +221,7 @@ class Person:
         self.pivot1 = pymunk.PivotJoint(self.head_body, self.body_body, (0, -Person.HEAD_RADIUS), (0, Person.BODY_SIZE[1]/2))
         self.pivot1.collide_bodies = False
         self.spring1 = pymunk.DampedSpring(self.body_body, self.head_body, (0, Person.BODY_SIZE[1]/2),
-                                           (0, 0), 15, 5000, 250)
+                                           (0, 0), 15, 10000, 250)
         self.spring1.collide_bodies = False
 
 
@@ -242,7 +248,7 @@ class Player:
         self.person = Person(pos+(-10, -50), space)
 
         self.pivot1 = pymunk.PivotJoint(self.person.body_body, self.car.chassis_body, (0, -Person.BODY_SIZE[1]/2), (0, -Car.CHASSIS_SIZE[1]/2))
-
+        self.pivot1.collide_bodies = False
         self.space.add(
             self.pivot1
         )
