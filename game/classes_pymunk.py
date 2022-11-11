@@ -1,6 +1,6 @@
 import pymunk
 import pymunk.pygame_util
-import terrain_maths
+from game import terrain_maths
 
 
 class Boundaries:
@@ -64,24 +64,48 @@ class Terrain:
             Terrain.create_segment(self.space, self.thickness,
                                    ((i - 1) * spacing, self.height - self.terrain_height_coordinates[i - 1]),
                                    (i * spacing, self.height - self.terrain_height_coordinates[i]))
+        #    Terrain.create_segment(self.space, self.spacing,
+        #                           (i * spacing, self.height),
+        #                           (i * spacing, self.height - self.terrain_height_coordinates[i] + self.spacing))
 
     def return_spawn(self):
         a = (Boundaries.THICKNESS//self.spacing) + 1
-        return pymunk.Vec2d((a*self.spacing+Car.CHASSIS_SIZE[0]), (self.height - Terrain.TERRAIN_THICKNESS - self.terrain_height_coordinates[a]) - Car.CHASSIS_SIZE[1])
+        b = Car.WIDTH//self.spacing + 1
+        c = self.terrain_height_coordinates.index(max(self.terrain_height_coordinates[a:(a+b)]))
+        return pymunk.Vec2d((a*self.spacing+Car.WIDTH/2), (self.height - Terrain.TERRAIN_THICKNESS - self.terrain_height_coordinates[c] - Car.HEIGHT - 2*Car.WHEEL_RADIUS))
 
 
 class Car:
     CHASSIS_MASS = 30
-    CHASSIS_SIZE = (80, 25)
     WHEEL_MASS = 25
-    WHEEL_RADIUS = 10
     WHEEL_FRICTION = 1.5
+
     WHEEL_COLOR = (0, 0, 0, 100)
     CHASSIS_COLOR = (255, 0, 0, 100)
     WHEEL_CONT_COLOR = (0, 255, 255, 100)
+
     ACCELERATION = 1000
     DECCELERATION = 10000
+
     MAX_RATE = 200
+    MAX_FORCE = 1000000
+
+    WIDTH = 80
+    HEIGHT = 80/4
+    CHASSIS_SIZE = (WIDTH, HEIGHT)
+    WHEEL_RADIUS = WIDTH/8
+
+
+    WHEEL_OFFSET_X = 5*WIDTH/16
+    WHEEL_OFFSET_Y = 0
+    CHASSIS_OFFSET_X = 0
+    CHASSIS_OFFSET_Y = 3*WIDTH/16
+
+    CHASSIS_CURVE_OFFSET_X = 5*WIDTH/12
+
+    WINDSHIELD_WIDTH = WIDTH/4
+    WINDSHIELD_HEIGHT = HEIGHT*0.8
+    WINDSHIELD_THICKNESS = WIDTH/16
 
     def __init__(self, pos, space):
         self.pos = pos
@@ -106,44 +130,45 @@ class Car:
         chassis_moment = pymunk.moment_for_box(Car.CHASSIS_MASS, Car.CHASSIS_SIZE)
         w, h = Car.CHASSIS_SIZE
         self.chassis_body = pymunk.Body(Car.CHASSIS_MASS, chassis_moment)
-        vs = [(-w / 2, -h / 2), (w / 4, -h / 2), (w / 2, -3 * h / 10),
+        vs = [(-w / 2, -h / 2), (Car.CHASSIS_CURVE_OFFSET_X, -h / 2), (w / 2, -3 * h / 10),
               (w / 2, h / 2), (-w / 2, h / 2)]
         self.chassis_shape = pymunk.Poly(self.chassis_body, vs)
         self.chassis_shape.color = Car.CHASSIS_COLOR
 
         # Windshield
         #  w, h = Car.CHASSIS_SIZE
-        ww, wh, wt = (w / 3, h, w / 16)  # windshield width, windshield height, windshield thickness
+        ww, wh, wt = Car.WINDSHIELD_WIDTH, Car.WINDSHIELD_HEIGHT, Car.WINDSHIELD_THICKNESS
         wvs = [(-ww / 2 + w / 3, -wh / 2 - h / 2),
                (-ww / 2 + wt + w / 3, -wh / 2 - h / 2),
                (ww / 2 - wt + w / 3, wh / 2 - h / 2),
-               (ww / 2 + w / 3, wh / 2 - h / 2)]
+               (ww / 2 + w / 3, wh / 3 - h / 2)]
         self.windshield_shape = pymunk.Poly(self.chassis_body, wvs)
         self.windshield_shape.color = Car.CHASSIS_COLOR
 
-
         # Positions
         w, h = Car.CHASSIS_SIZE
-        chassi_offset = 0.6*h  # 15
-        wheels_offset = 5*w/16  # 25
+        chassis_offset_x = Car.CHASSIS_OFFSET_X
+        chassis_offset_y = Car.CHASSIS_OFFSET_Y
+        wheels_offset_x = Car.WHEEL_OFFSET_X
+        wheels_offset_y = Car.CHASSIS_OFFSET_Y
 
-        self.chassis_body.position = self.pos + (0, -chassi_offset)
-        self.wheel1_body.position = self.pos + (-wheels_offset, 0)
-        self.wheel2_body.position = self.pos + (wheels_offset, 0)
+        self.chassis_body.position = self.pos + (chassis_offset_x, chassis_offset_y)
+        self.wheel1_body.position = self.pos + (-wheels_offset_x, wheels_offset_y)
+        self.wheel2_body.position = self.pos + (wheels_offset_x, wheels_offset_y)
 
         # Suspension/Joints
-        self.spring1 = pymunk.DampedSpring(self.chassis_body, self.wheel1_body, (-wheels_offset, 0),
+        self.spring1 = pymunk.DampedSpring(self.chassis_body, self.wheel1_body, (-wheels_offset_x, 0),
                                            (0, 0), 15, 5000, 250)
         self.spring1.collide_bodies = False
-        self.spring2 = pymunk.DampedSpring(self.chassis_body, self.wheel2_body, (wheels_offset, 0),
+        self.spring2 = pymunk.DampedSpring(self.chassis_body, self.wheel2_body, (wheels_offset_x, 0),
                                            (0, 0), 15, 5000, 250)
         self.spring2.collide_bodies = False
 
-        self.groove1 = pymunk.GrooveJoint(self.chassis_body, self.wheel1_body, (-wheels_offset, 0),
-                                          (-wheels_offset, wheels_offset), (0, 0))
+        self.groove1 = pymunk.GrooveJoint(self.chassis_body, self.wheel1_body, (-wheels_offset_x, 0),
+                                          (-wheels_offset_x, wheels_offset_x), (0, 0))
         self.groove1.collide_bodies = False
-        self.groove2 = pymunk.GrooveJoint(self.chassis_body, self.wheel2_body, (wheels_offset, 0),
-                                          (wheels_offset, wheels_offset), (0, 0))
+        self.groove2 = pymunk.GrooveJoint(self.chassis_body, self.wheel2_body, (wheels_offset_x, 0),
+                                          (wheels_offset_x, wheels_offset_x), (0, 0))
         self.groove2.collide_bodies = False
 
         self.motor1 = pymunk.SimpleMotor(self.wheel1_body, self.chassis_body, 10)
@@ -169,6 +194,8 @@ class Car:
 
     def gas(self):
         accelaration = Car.ACCELERATION
+        if self.motor1.max_force >= Car.MAX_FORCE:
+            return
         self.motor1.max_force += accelaration
         self.motor2.max_force += accelaration
 
@@ -193,8 +220,8 @@ class Person:
     # head/(neck-to-waist) = 1:3; 1/4 of total length (head-to-waist)
     HEAD_SIZE_RATIO = 1/2
     HEAD_FRICTION = 1
-    HEIGHT = 10
-    WIDTH = 10
+    HEIGHT = Car.HEIGHT
+    WIDTH = Car.WIDTH/4
     HEAD_RADIUS = HEAD_SIZE_RATIO*HEIGHT
     HEAD_MASS = 1
     BODY_MASS = 5
@@ -218,16 +245,15 @@ class Person:
         self.body_shape.color = Person.BODY_COLOR
 
     # joint
-        self.pivot1 = pymunk.PivotJoint(self.head_body, self.body_body, (0, -Person.HEAD_RADIUS), (0, Person.BODY_SIZE[1]/2))
+        self.pivot1 = pymunk.PivotJoint(self.head_body, self.body_body, (0, Person.HEAD_RADIUS), (0, -Person.BODY_SIZE[1]/2))
         self.pivot1.collide_bodies = False
-        self.spring1 = pymunk.DampedSpring(self.body_body, self.head_body, (0, Person.BODY_SIZE[1]/2),
+        self.spring1 = pymunk.DampedSpring(self.body_body, self.head_body, (0, 0),
                                            (0, 0), 15, 10000, 250)
         self.spring1.collide_bodies = False
 
-
     # position
-        self.head_body.position = self.pos + (0, -Person.HEIGHT*(1-Person.HEAD_RADIUS)/2 - Person.HEAD_RADIUS)
-        self.body_body.position = self.pos + (0, Person.HEIGHT*(1-Person.HEAD_RADIUS)/2)
+        self.head_body.position = self.pos + (0, -(Person.HEAD_RADIUS+Car.HEIGHT)/2)
+        self.body_body.position = self.pos + (0, Person.HEAD_RADIUS)
 
         self.space.add(
             self.body_body,
@@ -245,10 +271,15 @@ class Player:
         self.space = space
 
         self.car = Car(pos, space)
-        self.person = Person(pos+(-10, -50), space)
+        self.person = Person(pos+(0, (-Car.HEIGHT/2 + Car.CHASSIS_OFFSET_Y)), space)
 
-        self.pivot1 = pymunk.PivotJoint(self.person.body_body, self.car.chassis_body, (0, -Person.BODY_SIZE[1]/2), (0, -Car.CHASSIS_SIZE[1]/2))
+        self.pivot1 = pymunk.PivotJoint(self.person.body_body, self.car.chassis_body, (0, Person.BODY_SIZE[1]/2), (0, 0))
         self.pivot1.collide_bodies = False
+
+        self.spring1 = pymunk.DampedSpring(self.person.body_body, self.car.chassis_body,
+                                           (0, Person.BODY_SIZE[1]/2), (0, 0), 0, 100, 100)
+        self.pivot1.collide_bodies = False
+
         self.space.add(
-            self.pivot1
+            self.pivot1,
         )
