@@ -3,6 +3,8 @@ import pymunk
 import pymunk.pygame_util
 from game.common_functions import *
 from game.classes_pymunk import *
+from game.messageboxes import LossMessageBox, EscapeMessageBox
+
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, body, space, window, height, image):
@@ -16,14 +18,13 @@ class Entity(pygame.sprite.Sprite):
         super().__init__()
 
     def update(self):
-        #pos = convert_coordinates(self.body.position, self.height)
         self.rect.center = self.body.position
         self.image = pygame.transform.rotate(
             self.orig_image, -math.degrees(self.body.angle))
         self.rect = self.image.get_rect(center=self.rect.center)
 
 
-class PymunkHandler:
+class PygameObject:
     def __init__(self):
         pass
 
@@ -37,7 +38,7 @@ class PymunkHandler:
         pass
 
 
-class CarMovementHandler(PymunkHandler):
+class CarMovementHandler(PygameObject):
     def __init__(self, car):
         super().__init__()
         self.car = car  # classes_pymunk.Car
@@ -60,22 +61,20 @@ class CarMovementHandler(PymunkHandler):
             self.car.gas()
 
 
-class HeadCollisionHandlerPyGame(PymunkHandler):
+class HeadCollisionHandlerPyGame(PygameObject):
+    HEADCOLLISIONEVENT = pygame.event.Event(pygame.USEREVENT + 1)
+
     def __init__(self, space, game):
         super().__init__()
         self.head_collider = HeadCollisionHandler(space, self)
-        self.collision_event = pygame.event.Event(pygame.USEREVENT + 1)
+        self.collision_event = self.HEADCOLLISIONEVENT
         self.game = game
 
-    def handle_keys(self):
-        pass
-
     def generate_event(self):
-        pygame.event.post(self.collision_event)
+        if not self.game.done:
+            pygame.event.post(self.collision_event)
 
-    def handle_event(self, event):
-        if event == self.collision_event:
-            self.game.done = True
+
 
 
 class Camera:
@@ -102,3 +101,21 @@ class Camera:
             offset[1] = self.display_height - self.total_height
 
         return offset
+
+
+class MessageBox(PygameObject):
+    def __init__(self, game):
+        super(PygameObject).__init__()
+        self.game = game
+        self.fired = False
+
+    def handle_event(self, event):
+        if not self.fired:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    messagebox = EscapeMessageBox(self.game)
+                    messagebox.run()
+            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT:
+                messagebox = LossMessageBox(self.game)
+                messagebox.run()
+                self.fired = True

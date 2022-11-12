@@ -37,10 +37,10 @@ class Game:
 
     def run(self):
         while not self.done:
-            self.handle_events()
             self.run_logic()
             self.draw()
             self.clock.tick(self.FPS)
+            self.handle_events()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -49,8 +49,7 @@ class Game:
                 self.app.running = False
             for obj in self.objects_group:
                 obj.handle_event(event)
-        #   for sprite in self.sprite_group:
-            #   sprite.handle_event(event)
+
         else:
             self.handle_pressed_keys()
 
@@ -95,9 +94,11 @@ class Game:
         player = Player(pos, space)
         car = CarMovementHandler(player.car)
         head = HeadCollisionHandlerPyGame(space, self)
+        message_boxes = MessageBox(self)
         self.objects_group.append(car)
         self.objects_group.append(head)
-        
+        self.objects_group.append(message_boxes)
+
         image_path = 'sprites\pig.png'
         image = pygame.image.load(image_path)
         image = pygame.transform.scale(image, (80, 20))

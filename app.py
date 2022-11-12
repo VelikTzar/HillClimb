@@ -6,7 +6,7 @@ from menus.menus import *
 class App:
     def __init__(self):
         self.menu = None
-        self.game = Game(self)
+        self.game = None
         self.running = True
         self.playing = False
         self.curr_menu = 'MAIN'
@@ -19,10 +19,15 @@ class App:
         elif self.curr_menu == 'CREDITS':
             self.menu = CreditsMenu(self)
 
+    def get_game(self):
+        self.game = Game(self)
+
     def run(self):
         while self.running:
             if self.playing:
+                self.get_game()
                 self.game.run_game_loop()
+                self.game = None
                 self.playing = False
             else:
                 self.get_menu()
