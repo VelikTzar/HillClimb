@@ -94,7 +94,9 @@ class Game:
         pos = terrain.return_spawn()
         player = Player(pos, space)
         car = CarMovementHandler(player.car)
+        head = HeadCollisionHandlerPyGame(space, self)
         self.objects_group.append(car)
+        self.objects_group.append(head)
         
         image_path = 'sprites\pig.png'
         image = pygame.image.load(image_path)

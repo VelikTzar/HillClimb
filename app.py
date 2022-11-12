@@ -24,7 +24,8 @@ class App:
             if self.playing:
                 self.game.run_game_loop()
                 self.playing = False
-            self.get_menu()
-            self.menu.run()
-            self.menu = None
+            else:
+                self.get_menu()
+                self.menu.run()
+                self.menu = None
         pygame.quit()

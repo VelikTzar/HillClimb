@@ -2,7 +2,7 @@ import pygame
 import pymunk
 import pymunk.pygame_util
 from game.common_functions import *
-
+from game.classes_pymunk import *
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, body, space, window, height, image):
@@ -23,9 +23,27 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
 
 
-class CarMovementHandler:
+class PymunkHandler:
+    def __init__(self):
+        pass
+
+    def generate_event(self):
+        pass
+
+    def handle_event(self, event):
+        pass
+
+    def handle_keys(self):
+        pass
+
+
+class CarMovementHandler(PymunkHandler):
     def __init__(self, car):
+        super().__init__()
         self.car = car  # classes_pymunk.Car
+
+    def generate_event(self):
+        pass
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -42,8 +60,22 @@ class CarMovementHandler:
             self.car.gas()
 
 
-class PersonCollisionHandler:
-    pass
+class HeadCollisionHandlerPyGame(PymunkHandler):
+    def __init__(self, space, game):
+        super().__init__()
+        self.head_collider = HeadCollisionHandler(space, self)
+        self.collision_event = pygame.event.Event(pygame.USEREVENT + 1)
+        self.game = game
+
+    def handle_keys(self):
+        pass
+
+    def generate_event(self):
+        pygame.event.post(self.collision_event)
+
+    def handle_event(self, event):
+        if event == self.collision_event:
+            self.game.done = True
 
 
 class Camera:

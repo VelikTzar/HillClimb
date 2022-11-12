@@ -35,6 +35,7 @@ class Terrain:
     TERRAIN_ELASTICITY = 0.2
     TERRAIN_FRICTION = 1.5
     TERRAIN_THICKNESS = 5
+    TERRAIN_COLLISION_TYPE = 2
 
     def __init__(self, space, width, height):
         self.spacing = None
@@ -51,6 +52,7 @@ class Terrain:
         shape.color = Terrain.TERRAIN_COLOR
         shape.elasticity = Terrain.TERRAIN_ELASTICITY
         shape.friction = Terrain.TERRAIN_FRICTION
+        shape.collision_type = Terrain.TERRAIN_COLLISION_TYPE
         space.add(body, shape)
 
     # smoothness defines the number of iterations made during the cosine interpolation superposition
@@ -171,8 +173,8 @@ class Car:
                                           (wheels_offset_x, wheels_offset_x), (0, 0))
         self.groove2.collide_bodies = False
 
-        self.motor1 = pymunk.SimpleMotor(self.wheel1_body, self.chassis_body, 10)
-        self.motor2 = pymunk.SimpleMotor(self.wheel2_body, self.chassis_body, 10)
+        self.motor1 = pymunk.SimpleMotor(self.wheel1_body, self.chassis_body, 100)
+        self.motor2 = pymunk.SimpleMotor(self.wheel2_body, self.chassis_body, 100)
         self.motor1.max_force = 1000
         self.motor2.max_force = 1000
 
@@ -215,6 +217,7 @@ class Car:
 
 
 class Person:
+    HEAD_COLLISION_TYPE = 1
     HEAD_COLOR = (0, 255, 0, 100)
     BODY_COLOR = (0, 0, 0, 100)
     # head/(neck-to-waist) = 1:3; 1/4 of total length (head-to-waist)
@@ -237,6 +240,7 @@ class Person:
         self.head_shape = pymunk.Circle(self.head_body, Person.HEAD_RADIUS)
         self.head_shape.friction = Person.HEAD_FRICTION
         self.head_shape.color = Person.HEAD_COLOR
+        self.head_shape.collision_type = Person.HEAD_COLLISION_TYPE
 
     # body
         body_moment = pymunk.moment_for_box(Person.BODY_MASS, Person.BODY_SIZE)
@@ -265,6 +269,20 @@ class Person:
         )
 
 
+class HeadCollisionHandler:
+    def __init__(self, space, handler_pygame):
+        self.space = space
+        self.handler_pygame = handler_pygame
+        self.handler = self.space.add_collision_handler\
+            (collision_type_a=Person.HEAD_COLLISION_TYPE, collision_type_b=Terrain.TERRAIN_COLLISION_TYPE)
+        self.handler.begin = self.on_collision
+
+    def on_collision(self, space, arbiter, dummy):
+        shapes = arbiter.shapes
+        self.handler_pygame.generate_event()
+        return True
+
+
 class Player:
     def __init__(self, pos, space):
         self.pos = pos
@@ -278,8 +296,14 @@ class Player:
 
         self.spring1 = pymunk.DampedSpring(self.person.body_body, self.car.chassis_body,
                                            (0, Person.BODY_SIZE[1]/2), (0, 0), 0, 100, 100)
-        self.pivot1.collide_bodies = False
+        self.spring1.collide_bodies = False
+
+        self.spring2 = pymunk.DampedSpring(self.person.body_body, self.car.chassis_body,
+                                           (0, 0), (Car.WIDTH/4, 0), Car.WIDTH/4, 100, 100)
+        self.spring2.collide_bodies = False
 
         self.space.add(
             self.pivot1,
+            self.spring1,
+            self.spring2
         )
