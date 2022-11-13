@@ -50,6 +50,9 @@ class CarMovementHandler(PygameObject):
             elif event.key == pygame.K_RIGHT:
                 self.car.gas()
 
+    def get_coordinates(self):
+        return self.car.chassis_body.position
+
     def handle_keys(self):
         keys = pygame.key.get_pressed() # checking pressed keys
         if keys[pygame.K_LEFT]:
@@ -101,11 +104,11 @@ class Camera:
         self.obj = obj
 
     def get_coordinates(self):
-        return [self.obj.rect.centerx, self.obj.rect.centery]
+        return self.obj.get_coordinates()
 
     def follow_coordinates(self):
-        obj = self.obj
-        offset = [-obj.rect.centerx + self.display_width / 2, -obj.rect.centery + self.display_height / 2]
+        coordinates = self.get_coordinates()
+        offset = [-coordinates[0] + self.display_width / 2, -coordinates[1] + self.display_height/2]
         if offset[0] > 0:
             offset[0] = 0
         if offset[1] > 0:

@@ -1,4 +1,6 @@
 import pygame
+import tkinter as tk
+from menus.options import OptionsWindow
 
 
 class Menu:
@@ -8,7 +10,7 @@ class Menu:
     BLACK = (0, 0, 0)
     FPS = 60
 
-    def __init__(self, game):
+    def __init__(self, app):
         pygame.init()
         self.display = pygame.display.set_mode((Menu.DISPLAY_W, Menu.DISPLAY_H))
         self.mid_w, self.mid_h = Menu.DISPLAY_W / 2, Menu.DISPLAY_H / 2
@@ -17,7 +19,7 @@ class Menu:
         self.font_name = './menus/8-BIT WONDER.TTF'
         self.offset = - 100
         self.clock = pygame.time.Clock()
-        self.game = game
+        self.app = app
 
     def draw_cursor(self):
         self.draw_text('*', 15, self.cursor_rect.x, self.cursor_rect.y)
@@ -87,18 +89,18 @@ class MainMenu(Menu):
 
     def check_input(self):
         if self.state == 'Start':
-            self.game.playing = True
+            self.app.playing = True
         elif self.state == 'Options':
-            self.game.curr_menu = 'OPTIONS'
+            self.app.curr_menu = 'OPTIONS'
         elif self.state == 'Credits':
-            self.game.curr_menu = 'CREDITS'
+            self.app.curr_menu = 'CREDITS'
         self.run_display = False
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run_display = False
-                self.game.running = False
+                self.app.running = False
             if event.type == pygame.KEYDOWN:
                 self.move_cursor(event.key)
             if event.type == pygame.KEYDOWN:
@@ -114,10 +116,10 @@ class CreditsMenu(Menu):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run_display = False
-                self.game.running = False
+                self.app.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or pygame.K_BACKSPACE or pygame.K_ESCAPE:
-                    self.game.curr_menu = 'MAIN'
+                    self.app.curr_menu = 'MAIN'
                     self.run_display = False
 
     def draw(self):
@@ -129,4 +131,31 @@ class CreditsMenu(Menu):
 
 
 class OptionsMenu(Menu):
-    pass
+    def __init__(self, app):
+        super().__init__(app)
+        self.fired = False
+        self.run_display = True
+
+    def run(self):
+        if not self.fired:
+            window = tk.Tk()
+            options_view = OptionsWindow(self.app, window)
+            options_view.run()
+            window.mainloop()
+            self.fired = True
+            self.run_display = False
+            self.app.curr_menu = 'MAIN'
+
+    def draw(self):
+        self.display.fill(self.BLACK)
+        pygame.display.update()
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.run_display = False
+                self.app.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.app.curr_menu = 'MAIN'
+                    self.run_display = False
