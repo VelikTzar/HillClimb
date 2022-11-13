@@ -20,7 +20,8 @@ class App:
             self.menu = CreditsMenu(self)
 
     def get_game(self):
-        self.game = Game(self)
+        game_settings = Settings()
+        self.game = Game(self, game_settings)
 
     def run(self):
         while self.running:

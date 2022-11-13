@@ -37,11 +37,12 @@ class EscapeMessageBox(Messagebox):
             self.window.destroy()
 
 
-class LossMessageBox(Messagebox):
-    def __init__(self, game):
-        self.title = 'You lost.'
+class OutcomeMessageBox(Messagebox):
+    def __init__(self, game, title):
+        self.title = title
         self.text = 'Do you want to play again?'
         super().__init__(game, self.title, self.text)
+
 
     def run(self):
         self.messagebox = tk.messagebox.askquestion(self.title, self.text)
@@ -55,3 +56,18 @@ class LossMessageBox(Messagebox):
             self.window.destroy()
             self.game.done = True
             self.game.app.running = False
+
+
+class LossMessageBox(OutcomeMessageBox):
+    def __init__(self, game):
+        self.title = 'You lost.'
+        super().__init__(game, self.title)
+
+
+class VictoryMessageBox(OutcomeMessageBox):
+    def __init__(self, game):
+        self.title = 'You won. Congratulations!'
+        super().__init__(game, self.title)
+
+
+

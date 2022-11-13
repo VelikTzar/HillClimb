@@ -116,13 +116,17 @@ class CreditsMenu(Menu):
                 self.run_display = False
                 self.game.running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN or pygame.K_BACKSPACE:
+                if event.key == pygame.K_RETURN or pygame.K_BACKSPACE or pygame.K_ESCAPE:
                     self.game.curr_menu = 'MAIN'
                     self.run_display = False
 
     def draw(self):
         self.display.fill(Menu.BLACK)
         self.draw_text('Credits', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 - 40)
-        self.draw_text('Pako', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2)
-        self.draw_text('Rabani', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 + 30)
+        self.draw_text('Made by', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2)
+        self.draw_text('Krasimir Maslarov', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 + 30)
         pygame.display.update()
+
+
+class OptionsMenu(Menu):
+    pass

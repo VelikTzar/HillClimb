@@ -94,6 +94,7 @@ class Car:
     ACCELERATION = 1000
     DECCELERATION = 10000
 
+    RATE = 100
     MAX_RATE = 200
     MAX_FORCE = 1000000
 
@@ -177,8 +178,8 @@ class Car:
                                           (wheels_offset_x, wheels_offset_x), (0, 0))
         self.groove2.collide_bodies = False
 
-        self.motor1 = pymunk.SimpleMotor(self.wheel1_body, self.chassis_body, 100)
-        self.motor2 = pymunk.SimpleMotor(self.wheel2_body, self.chassis_body, 100)
+        self.motor1 = pymunk.SimpleMotor(self.wheel1_body, self.chassis_body, Car.RATE)
+        self.motor2 = pymunk.SimpleMotor(self.wheel2_body, self.chassis_body, Car.RATE)
         self.motor1.max_force = 1000
         self.motor2.max_force = 1000
 

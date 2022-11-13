@@ -3,7 +3,7 @@ import pymunk
 import pymunk.pygame_util
 from game.common_functions import *
 from game.classes_pymunk import *
-from game.messageboxes import LossMessageBox, EscapeMessageBox
+from game.messageboxes import LossMessageBox, EscapeMessageBox, VictoryMessageBox
 
 
 class Entity(pygame.sprite.Sprite):
@@ -130,7 +130,11 @@ class MessageBox(PygameObject):
                 if event.key == pygame.K_ESCAPE:
                     messagebox = EscapeMessageBox(self.game)
                     messagebox.run()
-            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT or event == VictoryHandler.VICTORY_EVENT:
+            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT:
                 messagebox = LossMessageBox(self.game)
+                messagebox.run()
+                self.fired = True
+            if event == VictoryHandler.VICTORY_EVENT:
+                messagebox = VictoryMessageBox(self.game)
                 messagebox.run()
                 self.fired = True

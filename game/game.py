@@ -6,7 +6,7 @@ import pymunk
 from game.classes_pymunk import *
 from game.classes_pygame import *
 from pymunk import pygame_util
-
+from game.settings import Settings
 
 class Game:
     WIDTH = 500
@@ -15,17 +15,27 @@ class Game:
     DISPLAY_H = 600
     FPS = 60
 
-    def __init__(self, app):
+    def __init__(self, app, settings):
+        self.car_rate = None
+        self.car_max_force = None
+        self.height_amplitude = None
+        self.smoothness = None
+        self.gravity = None
+        self.terrain_spacing = None
+        self.width = None
+        self.settings = settings
+        self.load_settings(settings)
+
         self.app = app
         self.done = False
         self.clock = pygame.time.Clock()
 
         self.display_window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H))
-        self.window = pygame.Surface((self.WIDTH, self.HEIGHT))
+        self.window = pygame.Surface((self.width, self.HEIGHT))
 
         # Pymunk stuff.
         self.space = pymunk.Space()
-        self.space.gravity = Vec2d(0.0, 300)
+        self.space.gravity = Vec2d(0.0, self.gravity)
 
         # A sprite group which holds the pygame.sprite.Sprite objects.
         self.sprite_group = pygame.sprite.Group()
@@ -33,7 +43,7 @@ class Game:
         # objects_group - handles events relating to pymunk objects (gas/drive)
         self.objects_group = []
 
-        self.camera = Camera(self.DISPLAY_W, self.DISPLAY_H, self.WIDTH, self.HEIGHT)
+        self.camera = Camera(self.DISPLAY_W, self.DISPLAY_H, self.width, self.HEIGHT)
 
     def run(self):
         while not self.done:
@@ -99,18 +109,26 @@ class Game:
         text_rect.center = (x, y)
         self.display_window.blit(text_surface, text_rect)
 
+    def load_settings(self, settings):
+        self.settings = settings
+        self.gravity = self.settings.gravity
+        self.terrain_spacing = self.settings.terrain_spacing
+        self.height_amplitude = self.settings.terrain_amplitude
+        self.smoothness = self.settings.terrain_smoothness
+        self.width = self.settings.map_length
+        self.car_rate = self.settings.car_rate
+        self.car_max_force = self.settings.car_max_force
+
     def run_game_loop(self):
         pygame.init()
 
         space = self.space
-
-        # ph_car = Car(pos, space)
-        # person = Person(pos, space)
-
         terrain = Terrain(space, self.WIDTH, self.HEIGHT)
-        terrain_bodies = terrain.generate_terrain(10, 0.5, 7)
+        terrain_bodies = terrain.generate_terrain(self.terrain_spacing, self.height_amplitude, self.smoothness)
         boundaries = Boundaries(space, self.WIDTH, self.HEIGHT)
         boundaries.generate_boundaries()
+        Car.RATE = self.car_rate
+        Car.MAX_FORCE = self.car_max_force
 
         pos = terrain.return_spawn()
         player = Player(pos, space)
@@ -130,12 +148,17 @@ class Game:
         head_image = pygame.image.load(head_image_path)
         wheel_image = pygame.image.load(wheel_image_path)
         car_image = pygame.transform.scale(car_image, (1.2*Car.WIDTH, 4*Car.HEIGHT))
-        head_image = pygame.transform.scale(head_image,  (3*player.person.head_shape.radius, 3*player.person.head_shape.radius))
+        head_image = pygame.transform.scale(head_image,
+                                            (3*player.person.head_shape.radius, 3*player.person.head_shape.radius))
         wheel_image = pygame.transform.scale(wheel_image, (2.1*Car.WHEEL_RADIUS, 2.1*Car.WHEEL_RADIUS))
-        car_sprite = Entity(body=player.car.chassis_body, space=space, window=self.window, height=self.HEIGHT, image=car_image)
-        head_sprite = Entity(body=player.person.head_body, space=space, window=self.window, height=self.HEIGHT, image=head_image)
-        wheel1 = Entity(body=player.car.wheel1_body, space=space, window=self.window, height=self.HEIGHT, image=wheel_image)
-        wheel2 = Entity(body=player.car.wheel2_body, space=space, window=self.window, height=self.HEIGHT, image=wheel_image)
+        car_sprite = Entity(body=player.car.chassis_body,
+                            space=space, window=self.window, height=self.HEIGHT, image=car_image)
+        head_sprite = Entity(body=player.person.head_body,
+                             space=space, window=self.window, height=self.HEIGHT, image=head_image)
+        wheel1 = Entity(body=player.car.wheel1_body,
+                        space=space, window=self.window, height=self.HEIGHT, image=wheel_image)
+        wheel2 = Entity(body=player.car.wheel2_body,
+                        space=space, window=self.window, height=self.HEIGHT, image=wheel_image)
         self.sprite_group.add(car_sprite)
         self.sprite_group.add(head_sprite)
         self.sprite_group.add(wheel1)
