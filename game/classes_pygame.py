@@ -88,7 +88,7 @@ class VictoryHandler(PygameObject):
 
     def generate_event(self):
         if (not self.game.done) and (self.player.person.head_body.position[0] >=
-                                     (self.game.WIDTH - Boundaries.THICKNESS - self.player.car.WIDTH)):
+                                     (self.game.width - Boundaries.THICKNESS - self.player.car.WIDTH)):
             pygame.event.post(self.victory_event)
 
 

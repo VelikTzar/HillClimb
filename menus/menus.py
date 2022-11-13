@@ -138,8 +138,12 @@ class OptionsMenu(Menu):
 
     def run(self):
         if not self.fired:
+            self.handle_events()
+            self.draw()
+            self.clock.tick(Menu.FPS)
             window = tk.Tk()
-            options_view = OptionsWindow(self.app, window)
+            window.title('Adjust game settings')
+            options_view = OptionsWindow(self.app, self, window)
             options_view.run()
             window.mainloop()
             self.fired = True
@@ -148,6 +152,8 @@ class OptionsMenu(Menu):
 
     def draw(self):
         self.display.fill(self.BLACK)
+        self.draw_text('Currently changing', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 - 30)
+        self.draw_text('game settings', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 + 30)
         pygame.display.update()
 
     def handle_events(self):

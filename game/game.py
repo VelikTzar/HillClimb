@@ -4,7 +4,6 @@ from game.classes_pymunk import Car
 
 
 class Game:
-    WIDTH = 4000
     HEIGHT = 600
     DISPLAY_W = 400
     DISPLAY_H = 600
@@ -18,10 +17,9 @@ class Game:
         self.gravity = None
         self.terrain_spacing = None
         self.width = None
-        self.load_sprites = True
+        self.load_sprites = False
         self.settings = settings
         self.load_settings(settings)
-
         self.app = app
         self.done = False
         self.clock = pygame.time.Clock()
@@ -121,9 +119,9 @@ class Game:
         pygame.init()
 
         space = self.space
-        terrain = Terrain(space, self.WIDTH, self.HEIGHT)
+        terrain = Terrain(space, self.width, self.HEIGHT)
         terrain_bodies = terrain.generate_terrain(self.terrain_spacing, self.height_amplitude, self.smoothness)
-        boundaries = Boundaries(space, self.WIDTH, self.HEIGHT)
+        boundaries = Boundaries(space, self.width, self.HEIGHT)
         boundaries.generate_boundaries()
         Car.RATE = self.car_rate
         Car.MAX_FORCE = self.car_max_force

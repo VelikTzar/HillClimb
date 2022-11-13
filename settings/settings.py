@@ -1,6 +1,3 @@
-import uuid
-
-
 class Settings:
     GRAVITY_DEFAULT = 500
     TERRAIN_SMOOTHNESS_DEFAULT = 8
@@ -11,7 +8,7 @@ class Settings:
     CAR_MAX_FORCE_DEFAULT = 1000000
     LOAD_SPRITES_DEFAULT = True
 
-    def __init__(self, name=None, gravity=None, terrain_smoothness=None, terrain_spacing=None, terrain_amplitude=None,
+    def __init__(self, gravity=None, terrain_smoothness=None, terrain_spacing=None, terrain_amplitude=None,
                  map_length=None, car_rate=None, car_max_force=None, load_sprites=None):
         if gravity:
             self.gravity = gravity
@@ -41,15 +38,7 @@ class Settings:
             self.car_max_force = car_max_force
         else:
             self.car_max_force = Settings.CAR_MAX_FORCE_DEFAULT
-        if load_sprites:
+        if load_sprites in (True, False):
             self.load_sprites = load_sprites
-        else:
+        elif load_sprites is None:
             self.load_sprites = Settings.LOAD_SPRITES_DEFAULT
-
-        self.id = None
-
-        if all((gravity, terrain_smoothness, terrain_spacing, terrain_amplitude, map_length, car_rate, car_max_force,
-               load_sprites)):
-            if self == Settings():
-                self.id = uuid.uuid4()
-                self.name = name
