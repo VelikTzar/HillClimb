@@ -43,9 +43,6 @@ class CarMovementHandler(PygameObject):
         super().__init__()
         self.car = car  # classes_pymunk.Car
 
-    def generate_event(self):
-        pass
-
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
@@ -57,8 +54,10 @@ class CarMovementHandler(PygameObject):
         keys = pygame.key.get_pressed() # checking pressed keys
         if keys[pygame.K_LEFT]:
             self.car.breaks()
-        if keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT]:
             self.car.gas()
+        else:
+            self.car.slow_down()
 
 
 class HeadCollisionHandlerPyGame(PygameObject):
@@ -70,11 +69,24 @@ class HeadCollisionHandlerPyGame(PygameObject):
         self.collision_event = self.HEADCOLLISIONEVENT
         self.game = game
 
-    def generate_event(self):
+    def post_loss_event(self):
         if not self.game.done:
             pygame.event.post(self.collision_event)
 
 
+class VictoryHandler(PygameObject):
+    VICTORY_EVENT = pygame.event.Event(pygame.USEREVENT + 2)
+
+    def __init__(self, game, player):
+        super().__init__()
+        self.victory_event = self.VICTORY_EVENT
+        self.game = game
+        self.player = player
+
+    def generate_event(self):
+        if (not self.game.done) and (self.player.person.head_body.position[0] >=
+                                     (self.game.WIDTH - Boundaries.THICKNESS - self.player.car.WIDTH)):
+            pygame.event.post(self.victory_event)
 
 
 class Camera:
@@ -87,6 +99,9 @@ class Camera:
 
     def set_obj(self, obj):
         self.obj = obj
+
+    def get_coordinates(self):
+        return [self.obj.rect.centerx, self.obj.rect.centery]
 
     def follow_coordinates(self):
         obj = self.obj
@@ -115,7 +130,7 @@ class MessageBox(PygameObject):
                 if event.key == pygame.K_ESCAPE:
                     messagebox = EscapeMessageBox(self.game)
                     messagebox.run()
-            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT:
+            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT or event == VictoryHandler.VICTORY_EVENT:
                 messagebox = LossMessageBox(self.game)
                 messagebox.run()
                 self.fired = True
