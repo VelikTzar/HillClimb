@@ -165,10 +165,10 @@ class Car:
 
         # Suspension/Joints
         self.spring1 = pymunk.DampedSpring(self.chassis_body, self.wheel1_body, (-wheels_offset_x, 0),
-                                           (0, 0), 15, 5000, 250)
+                                           (0, 0), 1.5*self.WIDTH/8, 5000, 250)
         self.spring1.collide_bodies = False
         self.spring2 = pymunk.DampedSpring(self.chassis_body, self.wheel2_body, (wheels_offset_x, 0),
-                                           (0, 0), 15, 5000, 250)
+                                           (0, 0), 1.5*self.WIDTH/8, 5000, 250)
         self.spring2.collide_bodies = False
 
         self.groove1 = pymunk.GrooveJoint(self.chassis_body, self.wheel1_body, (-wheels_offset_x, 0),
@@ -315,7 +315,7 @@ class Player:
         self.spring1.collide_bodies = False
 
         self.spring2 = pymunk.DampedSpring(self.person.body_body, self.car.chassis_body,
-                                           (0, 0), (Car.WIDTH / 4, 0), Car.WIDTH / 4, 100, 100)
+                                           (0, 0), (Car.WIDTH*0.3, 0), Car.WIDTH / 4, 100, 100)
         self.spring2.collide_bodies = False
 
         self.space.add(

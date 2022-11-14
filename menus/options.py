@@ -35,7 +35,7 @@ class OptionsWindow:
 
         terrain_smoothness_label = tk.Label(master=self.frame, text='Terrain smoothness')
         terrain_smoothness_var = tk.DoubleVar()
-        terrain_smoothness_slider = ttk.Scale(master=self.frame, from_=0, to=15, variable=terrain_smoothness_var,
+        terrain_smoothness_slider = ttk.Scale(master=self.frame, from_=1, to=15, variable=terrain_smoothness_var,
                                               command=lambda x:
                                               get_slider_value(terrain_smoothness_slider, terrain_smoothness_text_var))
         terrain_smoothness_var.set(self.curr_settings.terrain_smoothness)
@@ -55,7 +55,7 @@ class OptionsWindow:
 
         terrain_amplitude_label = tk.Label(master=self.frame, text='Terrain amplitude')
         terrain_amplitude_var = tk.DoubleVar()
-        terrain_amplitude_slider = ttk.Scale(master=self.frame, from_=0, to=1, variable=terrain_amplitude_var,
+        terrain_amplitude_slider = ttk.Scale(master=self.frame, from_=0.01, to=1, variable=terrain_amplitude_var,
                                              command=lambda x:
                                              get_slider_value(terrain_amplitude_slider, terrain_amplitude_text_var))
         terrain_amplitude_var.set(self.curr_settings.terrain_amplitude)
@@ -75,7 +75,7 @@ class OptionsWindow:
 
         car_rate_label = tk.Label(master=self.frame, text='Motor rate')
         car_rate_var = tk.DoubleVar()
-        car_rate_slider = ttk.Scale(master=self.frame, from_=0, to=500, variable=car_rate_var,
+        car_rate_slider = ttk.Scale(master=self.frame, from_=0.01, to=500, variable=car_rate_var,
                                     command=lambda x:
                                     get_slider_value(car_rate_slider, car_rate_text_var))
         car_rate_var.set(self.curr_settings.car_rate)

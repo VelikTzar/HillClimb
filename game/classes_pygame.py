@@ -54,7 +54,7 @@ class CarMovementHandler(PygameObject):
         return self.car.chassis_body.position
 
     def handle_keys(self):
-        keys = pygame.key.get_pressed() # checking pressed keys
+        keys = pygame.key.get_pressed()# checking pressed keys
         if keys[pygame.K_LEFT]:
             self.car.breaks()
         elif keys[pygame.K_RIGHT]:

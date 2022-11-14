@@ -43,9 +43,9 @@ class Game:
         while not self.done:
             self.run_logic()
             self.draw()
-            self.clock.tick(self.FPS)
             self.handle_events()
             self.handle_event_generation()
+            self.clock.tick(self.FPS)
 
     def handle_events(self):
         for event in pygame.event.get():

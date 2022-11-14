@@ -64,9 +64,10 @@ def cosp(a, b, mu):
     mu2 = (1 - math.cos(mu * math.pi)) / 2
     return a * (1 - mu2) + b * mu2
 
+
 def terrain_cosp(naive_terrain, sample=4):
     """Using naive terrain `naive_terrain` the function generates
-    Linearly Interpolated terrain on sample data.
+    Cosine Interpolated terrain on sample data.
     """
     terrain = []
 
@@ -152,7 +153,7 @@ def terrain_superpos_linp(naive_terrain, iterations=8):
 
 def terrain_superpos_cosp(naive_terrain, iterations=8):
     """Using naive terrain `naive_terrain` the function generates
-    Linearly Interpolated Superpositioned terrain that looks real world like.
+    Cosine Interpolated Superpositioned terrain that looks real world like.
     """
     terrains = []
 

@@ -58,7 +58,7 @@ class MainMenu(Menu):
 
     def draw(self):
         self.display.fill(self.BLACK)
-        self.draw_text('Monki Racing', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 - 20)
+        self.draw_text('PyRacing', 20, self.DISPLAY_W / 2, self.DISPLAY_H / 2 - 20)
         self.draw_text("Start Game", 20, self.startx, self.starty)
         self.draw_text("Options", 20, self.optionsx, self.optionsy)
         self.draw_text("Credits", 20, self.creditsx, self.creditsy)
