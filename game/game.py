@@ -69,23 +69,6 @@ class Game:
         self.space.step(1/self.FPS)  # Update physics.
         self.sprite_group.update()  # Update pygame sprites.
 
-    def draw(self):
-        self.window.fill('cadetblue1')
-
-        draw_options = pymunk.pygame_util.DrawOptions(self.window)
-        draw_options.flags = \
-            pymunk.SpaceDebugDrawOptions.DRAW_SHAPES | pymunk.SpaceDebugDrawOptions.DRAW_COLLISION_POINTS
-        self.space.debug_draw(draw_options)
-
-        self.sprite_group.draw(self.window)
-
-        offset = self.camera.follow_coordinates()
-
-        self.display_window.blit(self.window, offset)
-        self.show_distance()
-
-        pygame.display.update()
-
     def show_distance(self):
         font = pygame.font.Font(None, 30)
         distance = self.camera.get_coordinates()
@@ -103,6 +86,23 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.center = (x, y)
         self.display_window.blit(text_surface, text_rect)
+
+    def draw(self):
+        self.window.fill('cadetblue1')
+
+        draw_options = pymunk.pygame_util.DrawOptions(self.window)
+        draw_options.flags = \
+            pymunk.SpaceDebugDrawOptions.DRAW_SHAPES | pymunk.SpaceDebugDrawOptions.DRAW_COLLISION_POINTS
+        self.space.debug_draw(draw_options)
+
+        self.sprite_group.draw(self.window)
+
+        offset = self.camera.follow_coordinates()
+
+        self.display_window.blit(self.window, offset)
+        self.show_distance()
+
+        pygame.display.update()
 
     def load_settings(self, settings):
         self.settings = settings

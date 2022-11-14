@@ -92,6 +92,28 @@ class VictoryHandler(PygameObject):
             pygame.event.post(self.victory_event)
 
 
+class MessageBox(PygameObject):
+    def __init__(self, game):
+        super(PygameObject).__init__()
+        self.game = game
+        self.fired = False
+
+    def handle_event(self, event):
+        if not self.fired:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    messagebox = EscapeMessageBox(self.game)
+                    messagebox.run()
+            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT:
+                messagebox = LossMessageBox(self.game)
+                messagebox.run()
+                self.fired = True
+            if event == VictoryHandler.VICTORY_EVENT:
+                messagebox = VictoryMessageBox(self.game)
+                messagebox.run()
+                self.fired = True
+
+
 class Camera:
     def __init__(self, display_width, display_height, total_width, total_height):
         self.obj = None
@@ -119,25 +141,3 @@ class Camera:
             offset[1] = self.display_height - self.total_height
 
         return offset
-
-
-class MessageBox(PygameObject):
-    def __init__(self, game):
-        super(PygameObject).__init__()
-        self.game = game
-        self.fired = False
-
-    def handle_event(self, event):
-        if not self.fired:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    messagebox = EscapeMessageBox(self.game)
-                    messagebox.run()
-            if event == HeadCollisionHandlerPyGame.HEADCOLLISIONEVENT:
-                messagebox = LossMessageBox(self.game)
-                messagebox.run()
-                self.fired = True
-            if event == VictoryHandler.VICTORY_EVENT:
-                messagebox = VictoryMessageBox(self.game)
-                messagebox.run()
-                self.fired = True
