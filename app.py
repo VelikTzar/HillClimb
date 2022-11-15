@@ -22,7 +22,7 @@ class App:
             self.menu = CreditsMenu(self)
 
     def get_game(self):
-        self.game = Game(self, self.curr_settings)
+        self.game = Game(self)
 
     def run(self):
         while self.running:

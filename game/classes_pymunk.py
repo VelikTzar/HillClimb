@@ -56,7 +56,6 @@ class Terrain:
         space.add(body, shape)
         return body
 
-    # smoothness defines the number of iterations made during the cosine interpolation superposition
     def generate_terrain(self, spacing, max_height_ratio, smoothness=8):
         terrain_height = self.height * max_height_ratio
         self.spacing = spacing

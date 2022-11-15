@@ -1,6 +1,8 @@
+import pymunk
 from game.classes_pygame import *
 from pymunk import pygame_util
 from game.classes_pymunk import Car
+from settings.settings import Settings
 
 
 class Game:
@@ -9,7 +11,7 @@ class Game:
     DISPLAY_H = 600
     FPS = 60
 
-    def __init__(self, app, settings):
+    def __init__(self, app):
         self.car_rate = None
         self.car_max_force = None
         self.height_amplitude = None
@@ -18,9 +20,10 @@ class Game:
         self.terrain_spacing = None
         self.width = None
         self.load_sprites = False
-        self.settings = settings
-        self.load_settings(settings)
+
         self.app = app
+        self.settings = self.app.curr_settings
+        self.load_settings(self.settings)
         self.done = False
         self.clock = pygame.time.Clock()
 
@@ -105,15 +108,18 @@ class Game:
         pygame.display.update()
 
     def load_settings(self, settings):
-        self.settings = settings
-        self.gravity = self.settings.gravity
-        self.terrain_spacing = self.settings.terrain_spacing
-        self.height_amplitude = self.settings.terrain_amplitude
-        self.smoothness = self.settings.terrain_smoothness
-        self.width = self.settings.map_length
-        self.car_rate = self.settings.car_rate
-        self.car_max_force = self.settings.car_max_force
-        self.load_sprites = self.settings.load_sprites
+        if settings:
+            self.settings = settings
+            self.gravity = self.settings.gravity
+            self.terrain_spacing = self.settings.terrain_spacing
+            self.height_amplitude = self.settings.terrain_amplitude
+            self.smoothness = self.settings.terrain_smoothness
+            self.width = self.settings.map_length
+            self.car_rate = self.settings.car_rate
+            self.car_max_force = self.settings.car_max_force
+            self.load_sprites = self.settings.load_sprites
+        else:
+            self.load_settings(Settings())
 
     def run_game_loop(self):
         pygame.init()
