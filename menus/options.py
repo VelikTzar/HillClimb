@@ -6,8 +6,12 @@ from tkinter import ttk
 from tkinter import messagebox
 
 
-def get_slider_value(slider, var):
+def get_slider_value_float(slider, var):
     var.set(f'{slider.get(): .2f}')
+
+
+def get_slider_value_int(slider, var):
+    var.set(f'{int(slider.get())}')
 
 
 def change_btn_value(btn, var, text_var):
@@ -27,7 +31,7 @@ class OptionsWindow:
         gravity_label = tk.Label(master=self.frame, text='Gravity')
         gravity_var = tk.DoubleVar()
         gravity_slider = ttk.Scale(master=self.frame, from_=1, to=2000, variable=gravity_var,
-                                   command=lambda x: get_slider_value(gravity_slider, gravity_text_var))
+                                   command=lambda x: get_slider_value_float(gravity_slider, gravity_text_var))
         gravity_var.set(self.curr_settings.gravity)
         gravity_text_var = tk.StringVar()
         gravity_text_var.set(self.curr_settings.gravity)
@@ -37,7 +41,7 @@ class OptionsWindow:
         terrain_smoothness_var = tk.DoubleVar()
         terrain_smoothness_slider = ttk.Scale(master=self.frame, from_=1, to=15, variable=terrain_smoothness_var,
                                               command=lambda x:
-                                              get_slider_value(terrain_smoothness_slider, terrain_smoothness_text_var))
+                                              get_slider_value_int(terrain_smoothness_slider, terrain_smoothness_text_var))
         terrain_smoothness_var.set(self.curr_settings.terrain_smoothness)
         terrain_smoothness_text_var = tk.StringVar()
         terrain_smoothness_text_var.set(self.curr_settings.terrain_smoothness)
@@ -47,7 +51,7 @@ class OptionsWindow:
         terrain_spacing_var = tk.DoubleVar()
         terrain_spacing_slider = ttk.Scale(master=self.frame, from_=1, to=50, variable=terrain_spacing_var,
                                            command=lambda x:
-                                           get_slider_value(terrain_spacing_slider, terrain_spacing_text_var))
+                                           get_slider_value_int(terrain_spacing_slider, terrain_spacing_text_var))
         terrain_spacing_var.set(self.curr_settings.terrain_spacing)
         terrain_spacing_text_var = tk.StringVar()
         terrain_spacing_text_var.set(self.curr_settings.terrain_spacing)
@@ -57,7 +61,7 @@ class OptionsWindow:
         terrain_amplitude_var = tk.DoubleVar()
         terrain_amplitude_slider = ttk.Scale(master=self.frame, from_=0.01, to=1, variable=terrain_amplitude_var,
                                              command=lambda x:
-                                             get_slider_value(terrain_amplitude_slider, terrain_amplitude_text_var))
+                                             get_slider_value_float(terrain_amplitude_slider, terrain_amplitude_text_var))
         terrain_amplitude_var.set(self.curr_settings.terrain_amplitude)
         terrain_amplitude_text_var = tk.StringVar()
         terrain_amplitude_text_var.set(self.curr_settings.terrain_amplitude)
@@ -67,7 +71,7 @@ class OptionsWindow:
         map_length_var = tk.DoubleVar()
         map_length_slider = ttk.Scale(master=self.frame, from_=Game.DISPLAY_W, to=10000, variable=map_length_var,
                                       command=lambda x:
-                                      get_slider_value(map_length_slider, map_length_text_var))
+                                      get_slider_value_int(map_length_slider, map_length_text_var))
         map_length_var.set(self.curr_settings.map_length)
         map_length_text_var = tk.StringVar()
         map_length_text_var.set(self.curr_settings.map_length)
@@ -77,7 +81,7 @@ class OptionsWindow:
         car_rate_var = tk.DoubleVar()
         car_rate_slider = ttk.Scale(master=self.frame, from_=0.01, to=500, variable=car_rate_var,
                                     command=lambda x:
-                                    get_slider_value(car_rate_slider, car_rate_text_var))
+                                    get_slider_value_float(car_rate_slider, car_rate_text_var))
         car_rate_var.set(self.curr_settings.car_rate)
         car_rate_text_var = tk.StringVar()
         car_rate_text_var.set(self.curr_settings.car_rate)
@@ -87,7 +91,7 @@ class OptionsWindow:
         car_max_force_var = tk.DoubleVar()
         car_max_force_slider = ttk.Scale(master=self.frame, from_=0.1, to=10000000, variable=car_max_force_var,
                                          command=lambda x:
-                                         get_slider_value(car_max_force_slider, car_max_force_text_var))
+                                         get_slider_value_float(car_max_force_slider, car_max_force_text_var))
         car_max_force_var.set(self.curr_settings.car_max_force)
         car_max_force_text_var = tk.StringVar()
         car_max_force_text_var.set(self.curr_settings.car_max_force)
@@ -156,10 +160,6 @@ class OptionsWindow:
         tk.messagebox.showinfo('Settings applied', 'You will return to the main menu')
         self.frame.master.destroy()
         self.app.curr_settings = settings
-        print(self.app.curr_settings)
-        print(self.app.curr_settings.car_rate)
-        print(self.app.curr_settings.car_max_force)
-        print(self.app.curr_settings.load_sprites)
 
     def apply_default_settings(self):
         settings = Settings()
