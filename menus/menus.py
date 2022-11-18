@@ -130,21 +130,18 @@ class CreditsMenu(Menu):
 class OptionsMenu(Menu):
     def __init__(self, app):
         super().__init__(app)
-        self.fired = False
 
     def run(self):
-        if not self.fired:
-            self.handle_events()
-            self.draw()
-            self.clock.tick(Menu.FPS)
-            window = tk.Tk()
-            window.title('Adjust game settings')
-            options_view = OptionsWindow(self.app, self, window)
-            options_view.run()
-            window.mainloop()
-            self.fired = True
-            self.run_display = False
-            self.app.curr_menu = 'MAIN'
+        self.handle_events()
+        self.draw()
+        self.clock.tick(Menu.FPS)
+        window = tk.Tk()
+        window.title('Adjust game settings')
+        options_view = OptionsWindow(self.app, self, window)
+        options_view.run()
+        window.mainloop()
+        self.run_display = False
+        self.app.curr_menu = 'MAIN'
 
     def draw(self):
         self.display.fill(self.BLACK)
