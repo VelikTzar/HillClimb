@@ -35,9 +35,7 @@ class Menu:
         pass
 
     def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.run_display = False
+        pass
 
     def run(self):
         while self.run_display:
@@ -54,7 +52,6 @@ class MainMenu(Menu):
         self.optionsx, self.optionsy = self.mid_w, self.mid_h + 50
         self.creditsx, self.creditsy = self.mid_w, self.mid_h + 70
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
-        self.run_display = True
 
     def draw(self):
         self.display.fill(self.BLACK)
@@ -134,7 +131,6 @@ class OptionsMenu(Menu):
     def __init__(self, app):
         super().__init__(app)
         self.fired = False
-        self.run_display = True
 
     def run(self):
         if not self.fired:
