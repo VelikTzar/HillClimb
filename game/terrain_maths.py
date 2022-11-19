@@ -167,7 +167,7 @@ def terrain_superpos_cosp(naive_terrain, iterations=8):
         # compute the scaling factor (weight)
         weight = 1 / (2 ** (z - 1))
 
-        # compute sampling frequency suggesting every `sample`th
+        # compute sampling frequency suggesting every `sample`to
         # point to be picked from the naive terrain.
         sample = 1 << (iterations - z)
 

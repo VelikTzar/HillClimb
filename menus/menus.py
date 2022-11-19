@@ -140,7 +140,6 @@ class OptionsMenu(Menu):
         options_view = OptionsWindow(self.app, self, window)
         options_view.run()
         window.mainloop()
-        self.run_display = False
         self.app.curr_menu = 'MAIN'
 
     def draw(self):

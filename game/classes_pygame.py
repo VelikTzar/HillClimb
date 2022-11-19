@@ -41,7 +41,7 @@ class PygameObject:
 class CarMovementHandler(PygameObject):
     def __init__(self, car):
         super().__init__()
-        self.car = car  # classes_pymunk.Car
+        self.car = car  #
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -66,8 +66,9 @@ class CarMovementHandler(PygameObject):
 class HeadCollisionHandlerPyGame(PygameObject):
     HEADCOLLISIONEVENT = pygame.event.Event(pygame.USEREVENT + 1)
 
-    def __init__(self, space, game):
+    def __init__(self, game):
         super().__init__()
+        space = game.space
         self.head_collider = HeadCollisionHandler(space, self)
         self.collision_event = self.HEADCOLLISIONEVENT
         self.game = game

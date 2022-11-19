@@ -135,7 +135,7 @@ class Game:
         pos = terrain.return_spawn()
         player = Player(pos, space)
         car = CarMovementHandler(player.car)
-        head = HeadCollisionHandlerPyGame(space, self)
+        head = HeadCollisionHandlerPyGame(self)
         victory_checker = VictoryHandler(self, player)
         message_boxes = MessageBox(self)
         self.objects_group.append(car)

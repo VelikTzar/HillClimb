@@ -59,7 +59,7 @@ class Terrain:
     def generate_terrain(self, spacing, max_height_ratio, smoothness=8):
         terrain_height = self.height * max_height_ratio
         self.spacing = spacing
-        self.terrain_height_coordinates = terrain_maths.return_terrain_height_cos(self.width // spacing, terrain_height,
+        self.terrain_height_coordinates = terrain_maths.return_terrain_height_cos(((self.width // spacing) + 1), terrain_height,
                                                                                   smoothness)
         segment_body_list = []
         for i in range(1, len(self.terrain_height_coordinates)):
